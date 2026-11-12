@@ -1,0 +1,16 @@
+{
+  "name": "zrobdev-devops",
+  "owner": { "name": "ZrobDev", "url": "https://github.com/ZrobDev" },
+  "metadata": { "description": "Lean GitHub Actions and deploy skills: author least-privilege workflows, triage red CI, cut releases, deploy to a tailnet host with no stored secrets." },
+  "plugins": [
+    {
+      "name": "devops",
+      "source": "./",
+      "version": "0.1.0",
+      "description": "gha-author (SHA-pinned, least-privilege, minutes-aware workflows with OIDC references), ci-triage (read-only red-CI diagnosis), release (signed tags, floating major tags), deploy-vps (Tailscale SSH deploy from Actions via OIDC federated identity).",
+      "author": { "name": "ZrobDev" },
+      "license": "MIT",
+      "keywords": ["github-actions", "ci-cd", "security", "deploy", "tailscale", "oidc", "terraform", "release"]
+    }
+  ]
+}

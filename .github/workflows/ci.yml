@@ -1,0 +1,56 @@
+# Gates for a public skills repo. Every tool is pinned: actions by SHA, Python tools by
+# exact version. Secret and workflow scanning come from the owner's public reusable
+# ZrobDev/devops-pipeline/security.yml, so the pins for those live in one place.
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.event.pull_request.number || github.sha }}
+  cancel-in-progress: true
+
+env:
+  SKILL_SCANNER_VERSION: "2.3.2"
+
+jobs:
+  repo-checks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Content lint (plain text, no pipe-to-shell, no blobs, URL allowlist, size caps)
+        run: python3 scripts/lint_content.py
+      - name: Structure (frontmatter, manifest, CHANGELOG parity, vendor pins)
+        run: python3 scripts/validate.py
+      - name: Guard tests + puller selftest
+        run: |
+          PYTHONPYCACHEPREFIX="$RUNNER_TEMP/pyc" python3 -m unittest discover -s tests -v
+          python3 skills/de-vendors/scripts/pull_vendor.py selftest
+
+  skill-scanner:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
+        with:
+          enable-cache: false
+      - run: uv tool install "cisco-ai-skill-scanner==${SKILL_SCANNER_VERSION}"
+      - name: Scan every skill (fails on high or critical)
+        run: skill-scanner scan-all skills --recursive --use-behavioral --fail-on-severity high
+
+  security:
+    uses: ZrobDev/devops-pipeline/.github/workflows/security.yml@v1   # own repo: tag; third parties: SHA
+    with:
+      semgrep: false
+      trivy: false
