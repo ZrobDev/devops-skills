@@ -1,6 +1,6 @@
 ---
 name: deploy-vps
-description: Use when wiring a repository to deploy to a self-managed host over the tailnet from GitHub Actions - "add CD for this repo", "deploy to the VPS from CI", "run the apply script after the gate passes". Produces a dispatch-triggered caller of the reusable Tailscale-SSH deploy workflow, the host-side user and sudoers rule, the tailnet policy change, and the first-run checks. No secret is stored in GitHub.
+description: Use when wiring a repository to deploy to a self-managed host over the tailnet from GitHub Actions - "add CD for this repo", "deploy to the VPS from CI", "run the apply script after the gate passes". Produces the dispatch-triggered caller, the host-side user and sudoers rule, the tailnet policy change, and the first-run checks. No secret is stored in GitHub.
 license: MIT
 allowed-tools: Read, Grep, Bash(gh workflow:*), Bash(gh run:*), Bash(gh variable:*), Bash(gh api:*), Bash(git status:*), Bash(git log:*), Bash(git branch:*)
 ---
