@@ -36,9 +36,11 @@ deciding; it only joins and runs the command.
 3. **Host** (root, by the operator, each step confirmed): `tailscale set --ssh`; create a
    passwordless `deploy` user; a sudoers drop-in letting `deploy` run exactly
    `/srv/projects/REPO/vps/deploy-from-ci.sh` as the service user; `visudo -c`.
-4. **Deploy script in the repo**, `vps/deploy-from-ci.sh`: fetch, compare `HEAD` with
-   `origin/main`, exit 0 with `up-to-date` when equal, else `merge --ff-only` and run the
-   existing apply script. Reviewed like any other change.
+4. **Deploy script in the repo**, `vps/deploy-from-ci.sh`: export `XDG_RUNTIME_DIR` and
+   `DBUS_SESSION_BUS_ADDRESS` for the service user (sudo gives no session); fetch; exit 0
+   with `up-to-date` when a marker file holds `origin/main` already; else `merge --ff-only`,
+   run the existing apply script, and write the marker only after it succeeds. Reviewed
+   like any other change.
 5. **Caller**: copy the pipeline repo's `templates/deploy-caller.yml` to
    `.github/workflows/deploy.yml`; set host, user, command; keep `workflow_dispatch` as the
    only trigger on private repos. Run `gha-author`'s lint step.
