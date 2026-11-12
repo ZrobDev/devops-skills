@@ -16,3 +16,7 @@ Observed failures only. Add a line when the skill misfires, with the retro or is
 - A federated credential created before its tag existed cannot be edited to add the tag;
   the runner gets `403 calling actor does not have enough permissions` at auth-key creation.
   Create the tag in the policy first, then the credential (2026-11-12).
+- The deploy script is itself under version control, and bash reads a script incrementally:
+  a run that fast-forwards over a change to the script keeps executing the OLD copy. After
+  the fast-forward, `exec "$0" "$@"` so the new version runs; the second pass sees HEAD at
+  the target and does not merge again (2026-11-12, third CI deploy).
