@@ -10,3 +10,9 @@ Observed failures only. Add a line when the skill misfires, with the retro or is
   "workflow was not found".
 - `tailscale/github-action` installs the latest client unless `version:` is set, and
   verifies the tarball only when `sha256sum:` is set. Pin both.
+- 2026-11-12 dry run of a read-only LLM "ci-reviewer" over 13 repos and 3 templates: zero
+  high or medium findings, 8 low (hash-less pipx installs, job-level token visible to an
+  install step, a `gh pr comment` wildcard in an AI reviewer's allowed tools, `issues: write`
+  likely unneeded, mutable `@v1` receiving a secret, a live semgrep ruleset, missing
+  `timeout-minutes` on five jobs, unpinned apt installs). zizmor covered every high-impact
+  class, so no agent ships; this list is the checklist's "hygiene" tail instead.
